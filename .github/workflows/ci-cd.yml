@@ -25,9 +25,6 @@ jobs:
           retention-days: 30
       - name: Commit and Push Changes
         if: steps.update-images.outcome == 'success'
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add .
-          git diff-index --quiet HEAD || git commit -am 'Update Images' 
-          git push
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: "output"
