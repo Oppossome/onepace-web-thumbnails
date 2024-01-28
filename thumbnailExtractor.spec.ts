@@ -58,9 +58,12 @@ test("Should have all the thumbnails saved", async ({ page }) => {
   for (const arcItem of await carouselItem.all()) {
     await arcItem.scrollIntoViewIfNeeded();
     await arcItem.click();
+    await page.waitForTimeout(1000); // Wait for selection just in case.
 
-    const arcTitle = await arcItem.locator(CAROUSEL_INFO_TITLE).innerText();
+    let arcTitle = await page.locator(CAROUSEL_INFO_TITLE).innerText();
+    arcTitle = arcTitle.replace(/'/g, "").replace(/\s+/, "-").toLowerCase();
+
     const arcNumber = await arcItem.locator(CAROUSEL_ITEM_PART).innerText();
-    await expect(arcItem).toHaveScreenshot(`${arcTitle}-${arcNumber}.png`);
+    await expect(arcItem).toHaveScreenshot(`${arcNumber}-${arcTitle}.png`);
   }
 });
