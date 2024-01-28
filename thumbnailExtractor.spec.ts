@@ -1,50 +1,63 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect } from "@playwright/test";
+
+/** CSS Selectors */
+const CAROUSEL = `[class*="Carousel_container"]`;
+const CAROUSEL_ITEM = `div[class*="CarouselSliderItem_item"]`;
+const CAROUSEL_ITEM_PART = `span[class*="Carousel_part"]`;
+const CAROUSEL_ITEM_DURATION = `span[class*="Carousel_duration"]`;
+
+test.setTimeout(1000 * 60 * 5); // 5 minutes (default is 30 seconds)
 
 test("Should have all the thumbnails saved", async ({ page }) => {
   await page.goto("https://onepace.net/watch");
   await page.addStyleTag({
     content: `
-      [class*="Carousel_part"] {
+      /* Force the carousel to display all items. */
+      [class*="CarouselSlider_sliderContent"] {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      /* Force the carousel items to display in a large manner. */
+      ${CAROUSEL_ITEM} {
+        width: 756px !important;
+      }
+
+      /* Force the font size of the arc number and duration to be large. */
+      ${CAROUSEL_ITEM} span {
+        font-size: 64px;
+        padding: 0.5rem 1rem;
+      }
+
+      /* Force the arc number to display on the left. */
+      ${CAROUSEL_ITEM_PART} {
         right: unset;
         left: 0;
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 1rem;
       }
 
+      /* Fix border radius for the duration. */
+      ${CAROUSEL_ITEM_DURATION} {
+        border-top-left-radius: 1rem;
+      }
+      
+      /* Hide the header and the scroller. */
       [class*="CarouselSlider_scroller"], [class*="Header_container"] {
         display: none;
-      }
-
-      [class*="CarouselSliderItem_item"] {
-        width: 756px !important;
-      }
-
-      [class*="CarouselSliderItem_item"] span {
-        font-size: 64px;
-        padding: 0.5rem 1rem;
-      }
-
-      [class*="Carousel_root"] {
-        display: flex;
-        flex-wrap: wrap;
-      }
-
-      [class*="Carousel_duration"] {
-        border-top-left-radius: 1rem;
       }
     `,
   });
 
-  const carousel = page.locator(`[class*="Carousel_container"]`).nth(0);
-  // prettier-ignore
-  const carouselItem = carousel.locator(`div[class*="CarouselSliderItem_item"]`);
+  // Grab the first carousel and its items.
+  const carousel = page.locator(CAROUSEL).nth(0);
+  const carouselItem = carousel.locator(CAROUSEL_ITEM);
 
-  const itemCount = await carouselItem.count();
-  for (let i = 0; i < itemCount; i++) {
-    await expect(carouselItem.nth(i)).toHaveScreenshot(`arc-${i + 1}.png`, {
-      scale: "device",
-    });
+  // Iterate through each carousel item and take a screenshot.
+  for (const arcItem of await carouselItem.all()) {
+    await arcItem.scrollIntoViewIfNeeded();
+
+    const arcNumber = await arcItem.locator(CAROUSEL_ITEM_PART).innerText();
+    await expect(arcItem).toHaveScreenshot(`${arcNumber}.png`);
   }
-
-  await page.waitForTimeout(2000);
 });
