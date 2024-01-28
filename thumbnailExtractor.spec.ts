@@ -17,6 +17,7 @@ test("Should have all the thumbnails saved", async ({ page }) => {
       [class*="CarouselSlider_sliderContent"] {
         display: flex;
         flex-wrap: wrap;
+        gap: 4px;
       }
 
       /* Force the carousel items to display in a large manner. */
@@ -41,6 +42,7 @@ test("Should have all the thumbnails saved", async ({ page }) => {
       /* Fix border radius for the duration. */
       ${CAROUSEL_ITEM_DURATION} {
         border-top-left-radius: 1rem;
+        bottom: 0.55rem;
       }
       
       /* Hide the header and the scroller. */

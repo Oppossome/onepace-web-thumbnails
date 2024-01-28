@@ -17,7 +17,9 @@ jobs:
         run: yarn install --immutable
       - name: Install Playwright Browsers
         run: yarn playwright install --with-deps
-      - name: Update Images
+      - name: Remove Old Images
+        run: rm -rf output
+      - name: Generate Images
         id: update-images
         run: yarn update-snapshots
       - uses: actions/upload-artifact@v3
