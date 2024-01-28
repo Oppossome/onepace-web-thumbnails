@@ -12,7 +12,17 @@ jobs:
           cache-dependency-path: yarn.lock
       - name: Install Dependencies
         run: yarn install --immutable
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
       - name: Update Images
+        id: update-images
         run: yarn update-snapshots
-      - name: Commit changes
+      - uses: actions/upload-artifact@v3
+        if: steps.update-images.outcome == 'failure'
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+      - name: Commit and Push Changes
+        if: steps.update-images.outcome == 'success'
         uses: stefanzweifel/git-auto-commit-action@v4
