@@ -59,12 +59,17 @@ test("Should have all the thumbnails saved", async ({ page }) => {
   // Iterate through each carousel item and take a screenshot.
   for (const arcItem of await carouselItem.all()) {
     await arcItem.scrollIntoViewIfNeeded();
-    await arcItem.click();
-    await page.waitForTimeout(1000); // Wait for selection just in case.
 
+    // Select the arc item and grab the title.
+    await arcItem.click();
     let arcTitle = await page.locator(CAROUSEL_INFO_TITLE).innerText();
     arcTitle = arcTitle.replace(/'/g, "").replace(/\s+/, "-").toLowerCase();
 
+    // Deselect the arc item and wait for the animation to go away.
+    await arcItem.click();
+    await page.waitForTimeout(2500);
+
+    // Grab the arc number and take a screenshot.
     const arcNumber = await arcItem.locator(CAROUSEL_ITEM_PART).innerText();
     await expect(arcItem).toHaveScreenshot(`${arcNumber}-${arcTitle}.png`);
   }
