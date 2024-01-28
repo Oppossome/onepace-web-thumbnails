@@ -13,7 +13,7 @@ jobs:
       - name: Install Dependencies
         run: yarn install --immutable
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: yarn playwright install --with-deps
       - name: Update Images
         id: update-images
         run: yarn update-snapshots
