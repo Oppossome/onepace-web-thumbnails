@@ -36,6 +36,7 @@ export default defineConfig({
       name: "chromium",
       use: {
         ...devices["Desktop Chrome"],
+        // Comically large viewport to facilitate screenshotting every element.
         viewport: { width: 3440 * 2, height: 1440 * 2 },
       },
     },
