@@ -5,6 +5,7 @@ const CAROUSEL = `[class*="Carousel_container"]`;
 const CAROUSEL_ITEM = `div[class*="CarouselSliderItem_item"]`;
 const CAROUSEL_ITEM_PART = `span[class*="Carousel_part"]`;
 const CAROUSEL_ITEM_DURATION = `span[class*="Carousel_duration"]`;
+const CAROUSEL_INFO_TITLE = `div[class*="Carousel_expander"] h3`;
 
 test.setTimeout(1000 * 60 * 5); // 5 minutes (default is 30 seconds)
 
@@ -56,8 +57,10 @@ test("Should have all the thumbnails saved", async ({ page }) => {
   // Iterate through each carousel item and take a screenshot.
   for (const arcItem of await carouselItem.all()) {
     await arcItem.scrollIntoViewIfNeeded();
+    await arcItem.click();
 
+    const arcTitle = await arcItem.locator(CAROUSEL_INFO_TITLE).innerText();
     const arcNumber = await arcItem.locator(CAROUSEL_ITEM_PART).innerText();
-    await expect(arcItem).toHaveScreenshot(`${arcNumber}.png`);
+    await expect(arcItem).toHaveScreenshot(`${arcTitle}-${arcNumber}.png`);
   }
 });
