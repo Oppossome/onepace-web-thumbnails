@@ -42,7 +42,7 @@ test("Should have all the thumbnails saved", async ({ page }) => {
       /* Fix border radius for the duration. */
       ${CAROUSEL_ITEM_DURATION} {
         border-top-left-radius: 1rem;
-        bottom: 0.55rem;
+        bottom: 0;
       }
       
       /* Hide the header and the scroller. */
